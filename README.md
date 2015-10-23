@@ -163,9 +163,15 @@ batchLoader.add(...);
 
 
 ## Installation
+Download the standalone version **[HERE](https://raw.githubusercontent.com/edankwan/quick-loader/master/dist/quickLoader.js)**
 
+`npm install quick-loader`
 
 
 ## Todo
  - Write an exmaple to show how to create your custom types
  - Cross domain support
+
+
+## License
+quick-loader is currently under Giant Penis License (GPL) which is a deformed M.I.T license including penis text art.

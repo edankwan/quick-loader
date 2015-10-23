@@ -1,33 +1,33 @@
 {
-    "name": "quick-loader",
-    "version": "0.1.0",
-    "description": "quick-loader is an asset loader that loads everything",
-    "main": "index.js",
-    "author": "Edan Kwan",
-    "license": "Giant Penis License(GPL)",
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/edankwan/quick-loader.git"
-    },
-    "keywords": [
-        "loader",
-        "preload",
-        "preloader",
-        "asset",
-        "assets"
-    ],
-    "bugs": {
-        "url": "https://github.com/edankwan/quick-loader/issues"
-    },
-    "homepage": "https://github.com/edankwan/quick-loader",
-    "scripts": {
-        "build": "browserify index.js --standalone quickLoader > ./dist/quickLoader.js"
-    },
-    "devDependencies": {
-        "browserify": "~10.2.3"
-    },
-    "dependencies": {
-        "min-signal": "~0.0.5",
-        "computed-style": "~0.3.0"
-    }
+  "name": "quick-loader",
+  "version": "0.1.0",
+  "description": "quick-loader is an asset loader that loads everything",
+  "main": "index.js",
+  "author": "Edan Kwan",
+  "license": "Giant Penis License(GPL)",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/edankwan/quick-loader.git"
+  },
+  "keywords": [
+    "loader",
+    "preload",
+    "preloader",
+    "asset",
+    "assets"
+  ],
+  "bugs": {
+    "url": "https://github.com/edankwan/quick-loader/issues"
+  },
+  "homepage": "https://github.com/edankwan/quick-loader",
+  "scripts": {
+    "build": "browserify index.js --standalone quickLoader > ./dist/quickLoader.js"
+  },
+  "devDependencies": {
+    "browserify": "~10.2.3"
+  },
+  "dependencies": {
+    "min-signal": "~0.0.5",
+    "computed-style": "~0.3.0"
+  }
 }
