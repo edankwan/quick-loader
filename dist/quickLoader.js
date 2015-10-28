@@ -270,29 +270,34 @@ function load(url, cfg) {
 function start(onLoading) {
     if(onLoading) this.loadingSignal.add(onLoading);
     this.isLoading = true;
-    var itemList = this.itemList.splice(0, this.itemList.length);
-    var item;
-    for(var i = 0, len = itemList.length; i < len; i++) {
-        item = itemList[i];
-        item.onLoaded.addOnce(_onItemLoad, this, -1024, item, itemList);
-        if(item.hasLoading) {
-            item.loadingSignal.add(_onLoading, this, -1024, item, itemList, undef);
-        }
+    var len = this.itemList.length;
+    if(len) {
+        var itemList = this.itemList.splice(0, this.itemList.length);
+        var item;
+        for(var i = 0; i < len; i++) {
+            item = itemList[i];
+            item.onLoaded.addOnce(_onItemLoad, this, -1024, item, itemList);
+            if(item.hasLoading) {
+                item.loadingSignal.add(_onLoading, this, -1024, item, itemList, undef);
+            }
 
-        if(loadedItems[item.url]) {
-            item.dispatch(_onItemLoad);
-        } else {
-            if(!item.isStartLoaded) {
-                item.load();
+            if(loadedItems[item.url]) {
+                item.dispatch(_onItemLoad);
+            } else {
+                if(!item.isStartLoaded) {
+                    item.load();
+                }
             }
         }
+    } else {
+        _onItemLoad.call(this, undef, this.itemList);
     }
 }
 
 function _onLoading(item, itemList, loadingSignal, itemPercent, percent) {
 
     // leave the onLoading triggered by the _onItemLoad() to prevent stacked call.
-    if(!item.isLoaded && (itemPercent === 1)) return;
+    if(item && !item.isLoaded && (itemPercent === 1)) return;
     if(percent === undef) {
         this.loadedWeight = _getLoadedWeight(itemList);
         percent = this.loadedWeight / this.totalWeight;
