@@ -54,7 +54,7 @@ function load() {
     if (img.width) {
         this._onLoad();
     } else {
-        img.onload = this.boundOnLoad();
+        img.onload = this.boundOnLoad;
     }
 }
 
