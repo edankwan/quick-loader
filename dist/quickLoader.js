@@ -658,7 +658,7 @@ function load() {
     _super.load.apply(this, arguments);
     var img = this.content;
     img.src = this.url;
-    if (img.width) {
+    if (img.complete) {
         this._onLoad();
     } else {
         img.onload = this.boundOnLoad;
