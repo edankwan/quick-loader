@@ -1,71 +1,67 @@
-var MinSignal = require('min-signal');
-var quickLoader = require('../quickLoader');
+var MinSignal = require('min-signal')
+var quickLoader = require('../quickLoader')
 
-var undef;
+function AbstractItem (url, cfg) {
+  if (!url) return
+  this.url = url
+  this.loadedWeight = 0
+  this.weight = 1
+  for (var id in cfg) {
+    this[id] = cfg[id]
+  }
 
-function AbstractItem(url, cfg) {
-    if (!url) return;
-    this.url = url;
-    this.loadedWeight = 0;
-    this.weight = 1;
-    for(var id in cfg) {
-        this[id] = cfg[id];
+  if (!this.type) {
+    this.type = this.constructor.type
+  }
+
+  if (this.hasLoading) {
+    this.loadingSignal = new MinSignal()
+    this.loadingSignal.add(_onLoading, this)
+    if (this.onLoading) {
+      this.loadingSignal.add(this.onLoading)
     }
+  }
 
-    if(!this.type) {
-        this.type = this.constructor.type;
-    }
+  var self = this
+  this.boundOnLoad = function () {
+    self._onLoad()
+  }
+  this.onLoaded = new MinSignal()
 
-    if(this.hasLoading) {
-        this.loadingSignal = new MinSignal();
-        this.loadingSignal.add(_onLoading, this);
-        if(this.onLoading) {
-            this.loadingSignal.add(this.onLoading);
-        }
-    }
-
-    var self = this;
-    this.boundOnLoad = function () { self._onLoad();};
-    this.onLoaded = new MinSignal();
-
-    quickLoader.addedItems[url] = this;
-
+  quickLoader.addedItems[url] = this
 }
 
-module.exports = AbstractItem;
-var _p = AbstractItem.prototype;
-_p.load = load;
-_p._onLoad = _onLoad;
-_p._onLoading = _onLoading;
-_p.dispatch = dispatch;
+module.exports = AbstractItem
+var _p = AbstractItem.prototype
+_p.load = load
+_p._onLoad = _onLoad
+_p._onLoading = _onLoading
+_p.dispatch = dispatch
 
-AbstractItem.extensions = [];
+AbstractItem.extensions = []
 
-AbstractItem.retrieve = function() {
-    return false;
-};
-
-
-function load() {
-    this.isStartLoaded = true;
+AbstractItem.retrieve = function () {
+  return false
 }
 
-function _onLoad() {
-
-    this.isLoaded = true;
-    this.loadedWeight = this.weight;
-    quickLoader.loadedItems[this.url] = this;
-    this.onLoaded.dispatch(this.content);
-
+function load () {
+  this.isStartLoaded = true
 }
 
-function _onLoading(percent) {
-    this.loadedWeight = this.weight * percent;
+function _onLoad () {
+  this.isLoaded = true
+  this.loadedWeight = this.weight
+  quickLoader.loadedItems[this.url] = this
+  this.onLoaded.dispatch(this.content)
 }
 
-function dispatch() {
-    if(this.hasLoading) {
-        this.loadingSignal.remove();
-    }
-    this.onLoaded.dispatch(this.content);
+function _onLoading (percent) {
+  this.loadedWeight = this.weight * percent
+}
+
+function dispatch () {
+  if (this.hasLoading) {
+    this.loadingSignal.remove()
+  }
+  this.onLoaded.dispatch(this.content)
 }
