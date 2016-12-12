@@ -12,6 +12,9 @@ function AudioItem (url, cfg) {
   } catch (e) {
     this.content = document.createElement('audio')
   }
+  if (this.crossOrigin) {
+    this.content.crossOrigin = this.crossOrigin
+  }
 }
 
 module.exports = AudioItem

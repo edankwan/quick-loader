@@ -9,13 +9,16 @@ function QuickLoader () {
   this.itemUrls = {}
   this.itemList = []
   this.loadingSignal = new MinSignal()
+  this.crossOriginMap = {}
 }
 
 var _p = QuickLoader.prototype
 _p.addChunk = addChunk
+_p.setCrossOrigin = setCrossOrigin
 _p.add = add
 _p.load = load
 _p.start = start
+_p._createItem = _createItem
 _p._onLoading = _onLoading
 
 var quickLoader = module.exports = create()
@@ -34,6 +37,10 @@ var loadedItems = quickLoader.loadedItems = {}
 var ITEM_CLASS_LIST = quickLoader.ITEM_CLASS_LIST = []
 var ITEM_CLASSES = quickLoader.ITEM_CLASSES = {}
 
+function setCrossOrigin (domain, value) {
+  this.crossOriginMap[domain] = value
+}
+
 function addChunk (target, type) {
   var i, j, len, itemsLength, retrievedTypeObj
   var retrievedTypeObjList = retrieveAll(target, type)
@@ -49,7 +56,7 @@ function addChunk (target, type) {
 function add (url, cfg) {
   var item = addedItems[url]
   if (!item) {
-    item = _createItem(url, (cfg && cfg.type) ? cfg.type : retrieve(url).type, cfg)
+    item = this._createItem(url, (cfg && cfg.type) ? cfg.type : retrieve(url).type, cfg)
   }
 
   if (cfg && cfg.onLoad) item.onLoaded.addOnce(cfg.onLoad)
@@ -66,7 +73,7 @@ function add (url, cfg) {
 function load (url, cfg) {
   var item = addedItems[url]
   if (!item) {
-    item = _createItem(url, (cfg && cfg.type) ? cfg.type : retrieve(url).type, cfg)
+    item = this._createItem(url, (cfg && cfg.type) ? cfg.type : retrieve(url).type, cfg)
   }
 
   if (cfg && cfg.onLoad) item.onLoaded.addOnce(cfg.onLoad)
@@ -145,6 +152,15 @@ function _onItemLoad (item, itemList) {
 }
 
 function _createItem (url, type, cfg) {
+  cfg = cfg || {}
+  if (!cfg.crossOrigin) {
+    for (domain in this.crossOriginMap) {
+      if (url.indexOf(domain) === 0) {
+        cfg.crossOrigin = this.crossOriginMap[domain]
+        break
+      }
+    }
+  }
   return new ITEM_CLASSES[type](url, cfg)
 }
 

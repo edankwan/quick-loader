@@ -14,6 +14,9 @@ function VideoItem (url, cfg) {
   } catch (e) {
     this.content = document.createElement('video')
   }
+  if (this.crossOrigin) {
+    this.content.crossOrigin = this.crossOrigin
+  }
 }
 
 module.exports = VideoItem
