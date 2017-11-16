@@ -161,16 +161,25 @@ batchLoader.add(...);
 
 ```
 
+### Cross Origin
+```js
+var quickLoader = require('quick-loader');
+
+// set for everything cross-origin within a domain
+quickLoader.setCrossOrigin('http://mydomain/', 'anonymous')
+
+// set cross-origin for individual load item
+quickLoader.add('http://anotherdomain/image.jpg', {
+  crossOrigin: 'anonymous'
+})
+
+```
+
 
 ## Installation
 Download the standalone version **[HERE](https://raw.githubusercontent.com/edankwan/quick-loader/master/dist/quickLoader.js)**
 
 `npm install quick-loader`
-
-
-## Todo
- - Write an exmaple to show how to create your custom types
- - Cross domain support
 
 
 ## License

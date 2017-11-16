@@ -26,7 +26,7 @@ _p._createItem = _createItem
 _p._onLoading = _onLoading
 
 var quickLoader = module.exports = create()
-quickLoader.version = '0.1.8'
+quickLoader.version = '0.1.9'
 quickLoader.register = register
 quickLoader.retrieveAll = retrieveAll
 quickLoader.retrieve = retrieve
@@ -185,7 +185,7 @@ function _onItemLoad (item, itemList, isAlreadyLoaded) {
 function _createItem (url, type, cfg) {
   cfg = cfg || {}
   if (!cfg.crossOrigin) {
-    for (domain in this.crossOriginMap) {
+    for (var domain in this.crossOriginMap) {
       if (url.indexOf(domain) === 0) {
         cfg.crossOrigin = this.crossOriginMap[domain]
         break
