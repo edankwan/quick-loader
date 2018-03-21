@@ -74,6 +74,15 @@ quickLoader.start(...);
 
 ```
 
+### No Cache
+Normally after an item is loaded, the content will be stored and if you fetch the same url, it will not download the content again. But you can set `noCache` to true in the item config and bypass this feature. It will remove the reference after the file is loaded.
+```js
+quickLoader.load('img.jpg', {
+    noCache: true
+});
+
+```
+
 ### Working with third-party library loader like THREE.JS JSON Loader
 ```js
 quickLoader.load('mesh.json', {

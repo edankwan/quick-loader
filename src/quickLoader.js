@@ -174,12 +174,21 @@ function _onItemLoad (item, itemList, isAlreadyLoaded) {
     this.totalWeight = 0
     this.loadingSignal = new MinSignal()
     this._onLoading(item, itemList, loadingSignal, 1, 1)
+    if (item.noCache) _removeItemCache();
   } else {
     this._onLoading(item, itemList, loadingSignal, 1, this.loadedWeight / this.totalWeight)
+    if (item.noCache) _removeItemCache();
     if (!isAlreadyLoaded) {
       this.loadNext()
     }
   }
+}
+
+function _removeItemCache (item) {
+  var url = item.url;
+  item.content = undef;
+  addedItems[url] = undef;
+  loadedItems[url] = undef;
 }
 
 function _createItem (url, type, cfg) {
