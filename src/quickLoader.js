@@ -174,10 +174,10 @@ function _onItemLoad (item, itemList, isAlreadyLoaded) {
     this.totalWeight = 0
     this.loadingSignal = new MinSignal()
     this._onLoading(item, itemList, loadingSignal, 1, 1)
-    if (item.noCache) _removeItemCache();
+    if (item.noCache) _removeItemCache(item);
   } else {
     this._onLoading(item, itemList, loadingSignal, 1, this.loadedWeight / this.totalWeight)
-    if (item.noCache) _removeItemCache();
+    if (item.noCache) _removeItemCache(item);
     if (!isAlreadyLoaded) {
       this.loadNext()
     }
