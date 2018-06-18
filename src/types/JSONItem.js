@@ -21,8 +21,8 @@ _p.constructor = JSONItem
 _p._onLoad = _onLoad
 
 function _onLoad () {
-  if (this.content) {
-    this.content = window.JSON && window.JSON.parse ? JSON.parse(this.content.toString()) : eval(this.content.toString())
+  if (!this.content) {
+    this.content = window.JSON && window.JSON.parse ? JSON.parse(this.xmlhttp.responseText.toString()) : eval(this.xmlhttp.responseText.toString())
   }
   _super._onLoad.call(this)
 }

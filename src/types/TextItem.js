@@ -1,12 +1,11 @@
-var AbstractItem = require('./AbstractItem')
+var XHRItem = require('./XHRItem')
 var quickLoader = require('../quickLoader')
 
 var undef
 
-var IS_SUPPORT_XML_HTTP_REQUEST = !!window.XMLHttpRequest
-
-function TextItem (url) {
+function TextItem (url, cfg) {
   if (!url) return
+    cfg.responseType = 'text'
   _super.constructor.apply(this, arguments)
 }
 
@@ -19,57 +18,14 @@ TextItem.retrieve = function () {
   return false
 }
 
-var _super = AbstractItem.prototype
-var _p = TextItem.prototype = new AbstractItem()
+var _super = XHRItem.prototype
+var _p = TextItem.prototype = new XHRItem()
 _p.constructor = TextItem
-_p.load = load
-_p._onXmlHttpChange = _onXmlHttpChange
-_p._onXmlHttpProgress = _onXmlHttpProgress
 _p._onLoad = _onLoad
 
-function load () {
-  _super.load.apply(this, arguments)
-  var self = this
-  var xmlhttp
-
-  if (IS_SUPPORT_XML_HTTP_REQUEST) {
-    xmlhttp = this.xmlhttp = new XMLHttpRequest()
-  } else {
-    xmlhttp = this.xmlhttp = new ActiveXObject('Microsoft.XMLHTTP')
-  }
-  if (this.hasLoading) {
-    xmlhttp.onprogress = function (evt) {
-      self._onXmlHttpProgress(evt)
-    }
-  }
-  xmlhttp.onreadystatechange = function () {
-    self._onXmlHttpChange()
-  }
-  xmlhttp.open('GET', this.url, true)
-
-  if (IS_SUPPORT_XML_HTTP_REQUEST) {
-    xmlhttp.send(null)
-  } else {
-    xmlhttp.send()
-  }
-}
-
-function _onXmlHttpProgress (evt) {
-  this.loadingSignal.dispatch(evt.loaded / evt.total)
-}
-
-function _onXmlHttpChange () {
-  if (this.xmlhttp.readyState === 4) {
-    if (this.xmlhttp.status === 200) {
-      this.content = this.xmlhttp.responseText
-      this._onLoad()
-    }
-  }
-}
-
 function _onLoad () {
-  if (this.content) {
-    this.xmlhttp = undef
+  if (!this.content) {
+    this.content = this.xmlhttp.responseText;
   }
-  _super._onLoad.call(this)
+  _super._onLoad.apply(this, arguments)
 }

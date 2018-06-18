@@ -8,8 +8,9 @@ require('./src/types/AudioItem')
 require('./src/types/VideoItem')
 require('./src/types/AnyItem')
 require('./src/types/ImageItem')
+require('./src/types/XHRItem')
 
-},{"./src/quickLoader":4,"./src/types/AnyItem":6,"./src/types/AudioItem":7,"./src/types/ImageItem":8,"./src/types/JSONItem":9,"./src/types/JSONPItem":10,"./src/types/TextItem":11,"./src/types/VideoItem":12}],2:[function(require,module,exports){
+},{"./src/quickLoader":4,"./src/types/AnyItem":6,"./src/types/AudioItem":7,"./src/types/ImageItem":8,"./src/types/JSONItem":9,"./src/types/JSONPItem":10,"./src/types/TextItem":11,"./src/types/VideoItem":12,"./src/types/XHRItem":13}],2:[function(require,module,exports){
 // DEV: We don't use var but favor parameters since these play nicer with minification
 function computedStyle(el, prop, getComputedStyle, style) {
   getComputedStyle = window.getComputedStyle;
@@ -213,7 +214,7 @@ _p._createItem = _createItem
 _p._onLoading = _onLoading
 
 var quickLoader = module.exports = create()
-quickLoader.version = '0.2.0'
+quickLoader.version = '0.1.9'
 quickLoader.register = register
 quickLoader.retrieveAll = retrieveAll
 quickLoader.retrieve = retrieve
@@ -361,18 +362,27 @@ function _onItemLoad (item, itemList, isAlreadyLoaded) {
     this.totalWeight = 0
     this.loadingSignal = new MinSignal()
     this._onLoading(item, itemList, loadingSignal, 1, 1)
+    if (item && item.noCache) _removeItemCache(item);
   } else {
     this._onLoading(item, itemList, loadingSignal, 1, this.loadedWeight / this.totalWeight)
+    if (item && item.noCache) _removeItemCache(item);
     if (!isAlreadyLoaded) {
       this.loadNext()
     }
   }
 }
 
+function _removeItemCache (item) {
+  var url = item.url;
+  item.content = undef;
+  addedItems[url] = undef;
+  loadedItems[url] = undef;
+}
+
 function _createItem (url, type, cfg) {
   cfg = cfg || {}
   if (!cfg.crossOrigin) {
-    for (domain in this.crossOriginMap) {
+    for (var domain in this.crossOriginMap) {
       if (url.indexOf(domain) === 0) {
         cfg.crossOrigin = this.crossOriginMap[domain]
         break
@@ -736,8 +746,8 @@ _p.constructor = JSONItem
 _p._onLoad = _onLoad
 
 function _onLoad () {
-  if (this.content) {
-    this.content = window.JSON && window.JSON.parse ? JSON.parse(this.content.toString()) : eval(this.content.toString())
+  if (!this.content) {
+    this.content = window.JSON && window.JSON.parse ? JSON.parse(this.xmlhttp.responseText.toString()) : eval(this.xmlhttp.responseText.toString())
   }
   _super._onLoad.call(this)
 }
@@ -797,15 +807,14 @@ function load (callback) {
 }
 
 },{"../quickLoader":4,"./AbstractItem":5}],11:[function(require,module,exports){
-var AbstractItem = require('./AbstractItem')
+var XHRItem = require('./XHRItem')
 var quickLoader = require('../quickLoader')
 
 var undef
 
-var IS_SUPPORT_XML_HTTP_REQUEST = !!window.XMLHttpRequest
-
-function TextItem (url) {
+function TextItem (url, cfg) {
   if (!url) return
+    cfg.responseType = 'text'
   _super.constructor.apply(this, arguments)
 }
 
@@ -818,62 +827,19 @@ TextItem.retrieve = function () {
   return false
 }
 
-var _super = AbstractItem.prototype
-var _p = TextItem.prototype = new AbstractItem()
+var _super = XHRItem.prototype
+var _p = TextItem.prototype = new XHRItem()
 _p.constructor = TextItem
-_p.load = load
-_p._onXmlHttpChange = _onXmlHttpChange
-_p._onXmlHttpProgress = _onXmlHttpProgress
 _p._onLoad = _onLoad
 
-function load () {
-  _super.load.apply(this, arguments)
-  var self = this
-  var xmlhttp
-
-  if (IS_SUPPORT_XML_HTTP_REQUEST) {
-    xmlhttp = this.xmlhttp = new XMLHttpRequest()
-  } else {
-    xmlhttp = this.xmlhttp = new ActiveXObject('Microsoft.XMLHTTP')
-  }
-  if (this.hasLoading) {
-    xmlhttp.onprogress = function (evt) {
-      self._onXmlHttpProgress(evt)
-    }
-  }
-  xmlhttp.onreadystatechange = function () {
-    self._onXmlHttpChange()
-  }
-  xmlhttp.open('GET', this.url, true)
-
-  if (IS_SUPPORT_XML_HTTP_REQUEST) {
-    xmlhttp.send(null)
-  } else {
-    xmlhttp.send()
-  }
-}
-
-function _onXmlHttpProgress (evt) {
-  this.loadingSignal.dispatch(evt.loaded / evt.total)
-}
-
-function _onXmlHttpChange () {
-  if (this.xmlhttp.readyState === 4) {
-    if (this.xmlhttp.status === 200) {
-      this.content = this.xmlhttp.responseText
-      this._onLoad()
-    }
-  }
-}
-
 function _onLoad () {
-  if (this.content) {
-    this.xmlhttp = undef
+  if (!this.content) {
+    this.content = this.xmlhttp.responseText;
   }
-  _super._onLoad.call(this)
+  _super._onLoad.apply(this, arguments)
 }
 
-},{"../quickLoader":4,"./AbstractItem":5}],12:[function(require,module,exports){
+},{"../quickLoader":4,"./XHRItem":13}],12:[function(require,module,exports){
 var AbstractItem = require('./AbstractItem')
 var quickLoader = require('../quickLoader')
 
@@ -930,6 +896,86 @@ function _onLoad () {
   if (this.isLoaded) {
     return
   }
+  _super._onLoad.call(this)
+}
+
+},{"../quickLoader":4,"./AbstractItem":5}],13:[function(require,module,exports){
+var AbstractItem = require('./AbstractItem')
+var quickLoader = require('../quickLoader')
+
+var undef
+
+var IS_SUPPORT_XML_HTTP_REQUEST = !!window.XMLHttpRequest
+
+function XHRItem (url) {
+  if (!url) return
+  _super.constructor.apply(this, arguments)
+  this.responseType = this.responseType || ''
+  this.method = this.method || 'GET'
+}
+
+module.exports = XHRItem
+XHRItem.type = 'xhr'
+XHRItem.extensions = []
+quickLoader.register(XHRItem)
+
+XHRItem.retrieve = function () {
+  return false
+}
+
+var _super = AbstractItem.prototype
+var _p = XHRItem.prototype = new AbstractItem()
+_p.constructor = XHRItem
+_p.load = load
+_p._onXmlHttpChange = _onXmlHttpChange
+_p._onXmlHttpProgress = _onXmlHttpProgress
+_p._onLoad = _onLoad
+
+function load () {
+  _super.load.apply(this, arguments)
+  var self = this
+  var xmlhttp
+
+  if (IS_SUPPORT_XML_HTTP_REQUEST) {
+    xmlhttp = this.xmlhttp = new XMLHttpRequest()
+  } else {
+    xmlhttp = this.xmlhttp = new ActiveXObject('Microsoft.XMLHTTP')
+  }
+  if (this.hasLoading) {
+    xmlhttp.onprogress = function (evt) {
+      self._onXmlHttpProgress(evt)
+    }
+  }
+  xmlhttp.onreadystatechange = function () {
+    self._onXmlHttpChange()
+  }
+  xmlhttp.open(this.method, this.url, true)
+  this.xmlhttp.responseType = this.responseType
+
+  if (IS_SUPPORT_XML_HTTP_REQUEST) {
+    xmlhttp.send(null)
+  } else {
+    xmlhttp.send()
+  }
+}
+
+function _onXmlHttpProgress (evt) {
+  this.loadingSignal.dispatch(evt.loaded / evt.total)
+}
+
+function _onXmlHttpChange () {
+  if (this.xmlhttp.readyState === 4) {
+    if (this.xmlhttp.status === 200) {
+      this._onLoad(this.xmlhttp)
+    }
+  }
+}
+
+function _onLoad () {
+  if (!this.content) {
+    this.content = this.xmlhttp.response
+  }
+  this.xmlhttp = undef
   _super._onLoad.call(this)
 }
 
