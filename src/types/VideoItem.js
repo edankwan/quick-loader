@@ -10,9 +10,9 @@ function VideoItem (url, cfg) {
   this.loadThrough = !cfg || cfg.loadThrough === undef ? true : cfg.loadThrough
   _super.constructor.apply(this, arguments)
   try {
-    this.content = new Video()
+    this.content = this.content || new Video()
   } catch (e) {
-    this.content = document.createElement('video')
+    this.content = this.content || document.createElement('video')
   }
   if (this.crossOrigin) {
     this.content.crossOrigin = this.crossOrigin

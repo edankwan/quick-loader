@@ -8,9 +8,9 @@ function AudioItem (url, cfg) {
   this.loadThrough = !cfg || cfg.loadThrough === undef ? true : cfg.loadThrough
   _super.constructor.apply(this, arguments)
   try {
-    this.content = new Audio()
+    this.content = this.content || new Audio()
   } catch (e) {
-    this.content = document.createElement('audio')
+    this.content = this.content || document.createElement('audio')
   }
   if (this.crossOrigin) {
     this.content.crossOrigin = this.crossOrigin

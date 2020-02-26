@@ -5,7 +5,7 @@ var quickLoader = require('../quickLoader')
 function ImageItem (url, cfg) {
   if (!url) return
   _super.constructor.apply(this, arguments)
-  this.content = new Image()
+  this.content = this.content || new Image()
   if (this.crossOrigin) {
     this.content.crossOrigin = this.crossOrigin
   }
