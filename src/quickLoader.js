@@ -135,7 +135,7 @@ function loadNext () {
 
 function _onLoading (item, itemList, loadingSignal, itemPercent, percent) {
   // leave the onLoading triggered by the _onItemLoad() to prevent stacked call.
-  if (item && !item.isLoaded && (itemPercent === 1)) return
+  if (item && !item.isLoaded && (item.getCombinedPercent(itemPercent) === 1)) return
   if (percent === undef) {
     this.loadedWeight = _getLoadedWeight(itemList)
     percent = this.loadedWeight / this.totalWeight
@@ -162,7 +162,7 @@ function _onItemLoad (item, itemList, isAlreadyLoaded) {
     while (i--) {
       if(activeItems[i] === item) {
         activeItems.splice(i, 1)
-        break;
+        break
       }
     }
   }
@@ -174,10 +174,10 @@ function _onItemLoad (item, itemList, isAlreadyLoaded) {
     this.totalWeight = 0
     this.loadingSignal = new MinSignal()
     this._onLoading(item, itemList, loadingSignal, 1, 1)
-    if (item && item.noCache) _removeItemCache(item);
+    if (item && item.noCache) _removeItemCache(item)
   } else {
     this._onLoading(item, itemList, loadingSignal, 1, this.loadedWeight / this.totalWeight)
-    if (item && item.noCache) _removeItemCache(item);
+    if (item && item.noCache) _removeItemCache(item)
     if (!isAlreadyLoaded) {
       this.loadNext()
     }
@@ -185,10 +185,10 @@ function _onItemLoad (item, itemList, isAlreadyLoaded) {
 }
 
 function _removeItemCache (item) {
-  var url = item.url;
-  item.content = undef;
-  addedItems[url] = undef;
-  loadedItems[url] = undef;
+  var url = item.url
+  item.content = undef
+  addedItems[url] = undef
+  loadedItems[url] = undef
 }
 
 function _createItem (url, type, cfg) {

@@ -6,6 +6,7 @@ function AbstractItem (url, cfg) {
   this.url = url
   this.loadedWeight = 0
   this.weight = 1
+  this.postPercent = 0
   for (var id in cfg) {
     this[id] = cfg[id]
   }
@@ -22,6 +23,14 @@ function AbstractItem (url, cfg) {
     }
   }
 
+  if (this.postFunc) {
+    this.onPostLoadingSignal = new MinSignal()
+    this.onPostLoadingSignal.add(this._onPostLoading, this)
+    this.postWeightRatio = this.postWeightRatio || 0.1
+  } else {
+    this.postWeightRatio = 0
+  }
+
   var self = this
   this.boundOnLoad = function () {
     self._onLoad()
@@ -36,6 +45,9 @@ var _p = AbstractItem.prototype
 _p.load = load
 _p._onLoad = _onLoad
 _p._onLoading = _onLoading
+_p._onPostLoading = _onPostLoading
+_p._onLoadComplete = _onLoadComplete
+_p.getCombinedPercent = getCombinedPercent
 _p.dispatch = dispatch
 
 AbstractItem.extensions = []
@@ -49,14 +61,36 @@ function load () {
 }
 
 function _onLoad () {
+  if (this.postFunc) {
+    this.postFunc.call(this, this.url, this.onPostLoadingSignal)
+  } else {
+    this._onLoadComplete()
+  }
+}
+
+function _onPostLoading (percent) {
+  this.postPercent = percent
+  if (this.hasLoading) {
+    this.loadingSignal.dispatch(1)
+  }
+  if (percent === 1) {
+    this._onLoadComplete()
+  }
+}
+
+function _onLoadComplete () {
   this.isLoaded = true
   this.loadedWeight = this.weight
   quickLoader.loadedItems[this.url] = this
   this.onLoaded.dispatch(this.content)
 }
 
+function getCombinedPercent (percent) {
+  return percent * (1 - this.postWeightRatio) + (this.postWeightRatio * this.postPercent)
+}
+
 function _onLoading (percent) {
-  this.loadedWeight = this.weight * percent
+  this.loadedWeight = this.weight * this.getCombinedPercent(percent)
 }
 
 function dispatch () {
