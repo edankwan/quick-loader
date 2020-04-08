@@ -23,7 +23,7 @@ function AbstractItem (url, cfg) {
     }
   }
 
-  if (this.postFunc) {
+  if (this.onPost) {
     this.onPostLoadingSignal = new MinSignal()
     this.onPostLoadingSignal.add(this._onPostLoading, this)
     this.postWeightRatio = this.postWeightRatio || 0.1
@@ -61,8 +61,8 @@ function load () {
 }
 
 function _onLoad () {
-  if (this.postFunc) {
-    this.postFunc.call(this, this.url, this.onPostLoadingSignal)
+  if (this.onPost) {
+    this.onPost.call(this, this.content, this.onPostLoadingSignal)
   } else {
     this._onLoadComplete()
   }

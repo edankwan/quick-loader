@@ -89,7 +89,7 @@ quickLoader.load('mesh.json', {
     
     type: 'any',
     
-    loadFunc: function(url, cb) {
+    loadFunc: function(url, cb, loadingSignal) {
         
         var loader = new THREE.JSONLoader();
         
@@ -105,7 +105,23 @@ quickLoader.load('mesh.json', {
 
 ```
 
+### Postprocessing
+
+You can do postprocessing work with `onPost` 
+
+```js
+quickLoader.load('data.json', {
+    type: 'json',
+    postWeightRatio: 0.2 // [0-1] default 0.1, the weight ratio to the actual weight
+    onPost: function(content, postLoadingSignal) {
+    	content.foo = 'bar';
+    	postLoadingSignal.dispatch(1); // complete
+    }
+});
+```
+
 ### Individual asset preloading
+
 You can also add listener to the individual asset. This feature only works with asset types `json`, `text` and `any`.
 ```js
 quickLoader.add('data.json', {
