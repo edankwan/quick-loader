@@ -1,6 +1,6 @@
 {
   "name": "quick-loader",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "quick-loader is an asset loader that loads everything",
   "main": "index.js",
   "author": "Edan Kwan",
