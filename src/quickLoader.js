@@ -25,21 +25,21 @@ _p.loadNext = loadNext
 _p._createItem = _createItem
 _p._onLoading = _onLoading
 
+_p.VERSION = '0.1.16'
+_p.register = register
+_p.retrieveAll = retrieveAll
+_p.retrieve = retrieve
+_p.testExtensions = testExtensions
+_p.create = create
+_p.check = check
+
+var addedItems = _p.addedItems = {}
+var loadedItems = _p.loadedItems = {}
+
+var ITEM_CLASS_LIST = _p.ITEM_CLASS_LIST = []
+var ITEM_CLASSES = _p.ITEM_CLASSES = {}
+
 var quickLoader = module.exports = create()
-quickLoader.version = '0.1.9'
-quickLoader.register = register
-quickLoader.retrieveAll = retrieveAll
-quickLoader.retrieve = retrieve
-quickLoader.testExtensions = testExtensions
-quickLoader.create = create
-quickLoader.load = load
-quickLoader.check = check
-
-var addedItems = quickLoader.addedItems = {}
-var loadedItems = quickLoader.loadedItems = {}
-
-var ITEM_CLASS_LIST = quickLoader.ITEM_CLASS_LIST = []
-var ITEM_CLASSES = quickLoader.ITEM_CLASSES = {}
 
 function setCrossOrigin (domain, value) {
   this.crossOriginMap[domain] = value
