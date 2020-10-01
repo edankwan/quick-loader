@@ -213,21 +213,21 @@ _p.loadNext = loadNext
 _p._createItem = _createItem
 _p._onLoading = _onLoading
 
+_p.VERSION = '0.1.17'
+_p.register = register
+_p.retrieveAll = retrieveAll
+_p.retrieve = retrieve
+_p.testExtensions = testExtensions
+_p.create = create
+_p.check = check
+
+var addedItems = _p.addedItems = {}
+var loadedItems = _p.loadedItems = {}
+
+var ITEM_CLASS_LIST = _p.ITEM_CLASS_LIST = []
+var ITEM_CLASSES = _p.ITEM_CLASSES = {}
+
 var quickLoader = module.exports = create()
-quickLoader.version = '0.1.9'
-quickLoader.register = register
-quickLoader.retrieveAll = retrieveAll
-quickLoader.retrieve = retrieve
-quickLoader.testExtensions = testExtensions
-quickLoader.create = create
-quickLoader.load = load
-quickLoader.check = check
-
-var addedItems = quickLoader.addedItems = {}
-var loadedItems = quickLoader.loadedItems = {}
-
-var ITEM_CLASS_LIST = quickLoader.ITEM_CLASS_LIST = []
-var ITEM_CLASSES = quickLoader.ITEM_CLASSES = {}
 
 function setCrossOrigin (domain, value) {
   this.crossOriginMap[domain] = value
@@ -288,6 +288,9 @@ function start (onLoading) {
   if (len) {
     var itemList = this.itemList.splice(0, this.itemList.length)
     var item
+    for (var url in this.itemUrls) {
+        delete this.itemUrls[url];
+    }
     for (var i = 0; i < len; i++) {
       item = itemList[i]
       var isAlreadyLoaded = !!loadedItems[item.url]
@@ -515,7 +518,7 @@ function AbstractItem (url, cfg) {
     }
   }
 
-  if (this.postFunc) {
+  if (this.onPost) {
     this.onPostLoadingSignal = new MinSignal()
     this.onPostLoadingSignal.add(this._onPostLoading, this)
     this.postWeightRatio = this.postWeightRatio || 0.1
@@ -553,8 +556,8 @@ function load () {
 }
 
 function _onLoad () {
-  if (this.postFunc) {
-    this.postFunc.call(this, this.url, this.onPostLoadingSignal)
+  if (this.onPost) {
+    this.onPost.call(this, this.content, this.onPostLoadingSignal)
   } else {
     this._onLoadComplete()
   }

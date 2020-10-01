@@ -25,7 +25,7 @@ _p.loadNext = loadNext
 _p._createItem = _createItem
 _p._onLoading = _onLoading
 
-_p.VERSION = '0.1.16'
+_p.VERSION = '0.1.17'
 _p.register = register
 _p.retrieveAll = retrieveAll
 _p.retrieve = retrieve
@@ -100,6 +100,9 @@ function start (onLoading) {
   if (len) {
     var itemList = this.itemList.splice(0, this.itemList.length)
     var item
+    for (var url in this.itemUrls) {
+        delete this.itemUrls[url];
+    }
     for (var i = 0; i < len; i++) {
       item = itemList[i]
       var isAlreadyLoaded = !!loadedItems[item.url]
