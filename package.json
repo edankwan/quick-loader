@@ -4,7 +4,7 @@
   "description": "quick-loader is an asset loader that loads everything",
   "main": "index.js",
   "author": "Edan Kwan",
-  "license": "Giant Penis License(GPL)",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/edankwan/quick-loader.git"
@@ -24,11 +24,11 @@
     "build": "browserify index.js --standalone quickLoader > ./dist/quickLoader.js"
   },
   "devDependencies": {
-    "browserify": "~10.2.3"
+    "browserify": "~17.0.0"
   },
   "dependencies": {
     "computed-style": "~0.3.0",
-    "min-signal": "~0.0.5",
-    "mout": "~1.0.0"
+    "min-signal": "~0.0.8",
+    "mout": "~1.1.0"
   }
 }
