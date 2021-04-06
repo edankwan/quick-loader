@@ -208,4 +208,4 @@ Download the standalone version **[HERE](https://raw.githubusercontent.com/edank
 
 
 ## License
-quick-loader is currently under Giant Penis License (GPL) which is a deformed M.I.T license including penis text art.
+MIT License
