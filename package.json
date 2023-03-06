@@ -29,6 +29,6 @@
   "dependencies": {
     "computed-style": "~0.3.0",
     "min-signal": "~0.0.8",
-    "mout": "~1.1.0"
+    "mout": "~1.2.4"
   }
 }
